@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<style>
+  
+  html, body{
+    height: 100%;
+  }
+  
+  .btn-circle{
+    background-color: white; /* White */
+    width: 115px;
+    border: 7px solid rgba(0, 0, 0, 0.425);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 45px;
+    margin: 4px 4px;
+    cursor: pointer;
+    border-radius: 100px;
+  }
+  
+  .current-X .btn-circle:hover{
+    /* background-color: rgb(155, 255, 158);
+    border: 7px solid #4CAF50; */
+    background-color: rgb(197, 31, 31);
+    border: 7px solid rgb(139, 60, 60);
+  }
+  .current-Y .btn-circle:hover{
+    background-color: rgb(105, 107, 255);
+    border: 7px solid rgb(77, 80, 248);
+  }
+  
+  .btn-circle.btn-circleX:disabled{
+    background-color: rgb(197, 31, 31);
+    border: 7px solid rgb(139, 60, 60);
+  }
+  .btn-circle.btn-circleY:disabled{
+    background-color: rgb(105, 107, 255);
+    border: 7px solid rgb(77, 80, 248);
+  }
+  
+</style>
+<body>
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.9/angular.min.js"></script>
+  
+  
+  <div class="d-flex justify-content-center align-items-center h-100">    
+    <div ng-app="TicTacToe" ng-controller="TicCtrl" ng-class="{'current-X' : current == 'X','current-Y' : current == 'Y' }">
+      <h1 class="text-center font-italic">TicTacToe</h1>
+      <h2 class="alert alert-success mb-3 text-center" ng-if="win != 'NO'">{{win}}</h2>
+      <h2 class="alert alert-info mb-3 text-center" ng-if="tie">Tie!</h2>
+      
+      <div ng-repeat="buttonRow in buttons">
+        <input type="button" class="btn-circle" ng-class="{'btn-circleX' : b.val == 'X','btn-circleY' : b.val == 'Y' }" 
+        ng-repeat="b in buttonRow" ng-value="b.val" ng-click="click(b)" ng-disabled="b.val != '-' "/>
+      </div>
+      <button ng-if="win != 'NO' || tie" ng-click="newGame()" class="btn btn-success mt-3 mx-auto d-block">Restart Game</button>
+    </div>
+    
+  </div>
+  
+  <script>
+    angular.module("TicTacToe", [])
+    .controller("TicCtrl", ['$scope', '$log', function($scope, $log){
+      
+      $scope.newGame = function(){
+        
+        $scope.current = 'X';
+        $scope.win = 'NO';
+        $scope.tie = false;
+        
+        $scope.arr = [];
+        
+        $scope.buttons = [
+        [
+        {number : 1, selected:false, val: '-'},
+        {number : 2, selected:false, val: '-'},
+        {number : 3, selected:false, val: '-'}
+        ],
+        [
+        {number : 4, selected:false, val: '-'},
+        {number : 5, selected:false, val: '-'},
+        {number : 6, selected:false, val: '-'}
+        ],
+        [
+        {number : 7, selected:false, val: '-'},
+        {number : 8, selected:false, val: '-'},
+        {number : 9, selected:false, val: '-'}
+        ]
+        ]
+      }
+      
+      $scope.newGame();
+      
+      $scope.click = function(b){
+        b.selected = b.selected == true? false : true;
+        b.val = $scope.current;
+        $scope.current = $scope.current == 'X' ? 'Y' : 'X';
+        $scope.arr[b.number - 1] = b.val;
+        $scope.checkForWin();
+      };
+      
+      $scope.checkForWin = function(){
+        if($scope.arr[0] == 'X' && $scope.arr[4] == 'X' && $scope.arr[8] == 'X' ||
+        $scope.arr[2] == 'X' && $scope.arr[4] == 'X' && $scope.arr[6] == 'X' ||
+        $scope.arr[0] == 'X' && $scope.arr[1] == 'X' && $scope.arr[2] == 'X' ||
+        $scope.arr[3] == 'X' && $scope.arr[4] == 'X' && $scope.arr[5] == 'X' ||
+        $scope.arr[6] == 'X' && $scope.arr[7] == 'X' && $scope.arr[8] == 'X' ||
+        $scope.arr[0] == 'X' && $scope.arr[3] == 'X' && $scope.arr[6] == 'X' ||
+        $scope.arr[1] == 'X' && $scope.arr[4] == 'X' && $scope.arr[7] == 'X' ||
+        $scope.arr[2] == 'X' && $scope.arr[5] == 'X' && $scope.arr[8] == 'X' 
+        )
+        {
+          $scope.win = 'X Wins';
+          $log.debug("YES");
+        }
+        
+        else if($scope.arr[0] == 'Y' && $scope.arr[4] == 'Y' && $scope.arr[8] == 'Y' ||
+        $scope.arr[2] == 'Y' && $scope.arr[4] == 'Y' && $scope.arr[6] == 'Y' ||
+        $scope.arr[0] == 'Y' && $scope.arr[1] == 'Y' && $scope.arr[2] == 'Y' ||
+        $scope.arr[3] == 'Y' && $scope.arr[4] == 'Y' && $scope.arr[5] == 'Y' ||
+        $scope.arr[6] == 'Y' && $scope.arr[7] == 'Y' && $scope.arr[8] == 'Y' ||
+        $scope.arr[0] == 'Y' && $scope.arr[3] == 'Y' && $scope.arr[6] == 'Y' ||
+        $scope.arr[1] == 'Y' && $scope.arr[4] == 'Y' && $scope.arr[7] == 'Y' ||
+        $scope.arr[2] == 'Y' && $scope.arr[5] == 'Y' && $scope.arr[8] == 'Y' 
+        )
+        {
+          $scope.win = 'Y Wins';
+          $log.debug("YES");
+        }
+        
+        else{
+          
+          var count = 0;
+          
+          for(var i in $scope.arr){
+            count++;
+          }
+          
+          $scope.tie = count == 9;
+          /*$scope.tie = $scope.arr.length == 9 && !$scope.arr.some(function(val){
+            $log.debug("Valore : ", val)
+            return val === null;
+          });*/
+          
+        }
+      } 
+      
+    }])
+    
+  </script>
+  
+</body>
+</html>
